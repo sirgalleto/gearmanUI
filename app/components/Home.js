@@ -92,7 +92,7 @@ export default class Home extends Component {
         </Button>
 
         { this.state.result && (
-          <Text background={this.state.success ? 'green' : 'red'}>
+          <Text background={this.state.success ? '#acf783' : '#ffbfbe'} padding="0 100px" textAlign="center" size="16">
             {this.state.result}
           </Text>
         )}

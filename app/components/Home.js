@@ -5,7 +5,7 @@ import gearman from 'gearmanode';
 
 export default class Home extends Component {
   state = {
-    result: null,
+    result: '',
     success: false
   }
   client = null;
@@ -32,18 +32,16 @@ export default class Home extends Component {
 
       console.info(`${this.jobName} submited`);
 
-      job.on('complete', (data) => {
-        alert('complete');
+      job.on('complete', () => {
         this.setState({
-          result: data.toString(),
+          result: job.response ? job.response.toString() : '',
           success: true
         });
       });
 
-      job.on('error', (data) => {
-        alert('error');
+      job.on('error', () => {
         this.setState({
-          result: data.toString(),
+          result: job.response ? job.response.toString() : '',
           success: false
         });
       });

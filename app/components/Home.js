@@ -1,17 +1,103 @@
 // @flow
 import React, { Component } from 'react';
-import { Link } from 'react-router';
-import styles from './Home.css';
-
+import { TextInput, Button, Text } from 'react-desktop/macOs';
+import gearman from 'gearmanode';
 
 export default class Home extends Component {
+  state = {
+    result: null,
+    success: false
+  }
+  client = null;
+  jobName = '';
+  payload = null;
+  servers = '';
+  subscribeWorkers() {
+    const gearmanServers = [];
+    this.servers.split(',').forEach(server => {
+      gearmanServers.push({
+        host: server.trim(),
+        port: 4730
+      });
+    });
+
+    this.client = gearman.client({ servers: gearmanServers });
+
+    console.log(gearmanServers);
+    console.log(this.client);
+  }
+  submitJob() {
+    if (this.client && this.payload) {
+      const job = this.client.submitJob(this.jobName, this.payload);
+
+      console.info(`${this.jobName} submited`);
+
+      job.on('complete', (data) => {
+        alert('complete');
+        this.setState({
+          result: data.toString(),
+          success: true
+        });
+      });
+
+      job.on('error', (data) => {
+        alert('error');
+        this.setState({
+          result: data.toString(),
+          success: false
+        });
+      });
+    }
+  }
   render() {
     return (
       <div>
-        <div className={styles.container} data-tid="container">
-          <h2>Home</h2>
-          <Link to="/counter">to Counter</Link>
-        </div>
+        <TextInput
+          label="Servers"
+          placeholder="server,server"
+          onChange={e => {
+            this.servers = e.target.value;
+          }}
+        />
+
+        <br />
+
+        <Button color="blue" onClick={this.subscribeWorkers.bind(this)}>
+          Use
+        </Button>
+
+        <br />
+        <br />
+
+        <TextInput
+          label="job name"
+          placeholder="job name"
+          onChange={e => {
+            this.jobName = e.target.value;
+          }}
+        />
+
+        <br />
+
+        <TextInput
+          label="Payload"
+          placeholder="{data: data}"
+          onChange={e => {
+            this.payload = e.target.value;
+          }}
+        />
+
+        <br />
+
+        <Button color="blue" onClick={this.submitJob.bind(this)}>
+          Submit
+        </Button>
+
+        { this.state.result && (
+          <Text background={this.state.success ? 'green' : 'red'}>
+            {this.state.result}
+          </Text>
+        )}
       </div>
     );
   }

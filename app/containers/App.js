@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import type { Children } from 'react';
+import { View } from 'react-desktop/macOs';
 
 export default class App extends Component {
   props: {
@@ -9,9 +10,9 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
+      <View>
         {this.props.children}
-      </div>
+      </View>
     );
   }
 }

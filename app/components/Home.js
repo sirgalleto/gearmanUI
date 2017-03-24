@@ -34,7 +34,7 @@ export default class Home extends Component {
 
       job.on('complete', () => {
         this.setState({
-          result: job.response ? job.response.toString() : '',
+          result: job.response ? this.processResponse(job.response) : '',
           success: true
         });
       });
@@ -46,6 +46,19 @@ export default class Home extends Component {
         });
       });
     }
+  }
+  processResponse(data) {
+    console.log(data);
+    data = data.toString();
+    console.log(data);
+
+    alert(typeof data);
+
+    if (typeof data === 'object') {
+      return JSON.stringify(data, null, 2);
+    }
+
+    return data;
   }
   render() {
     return (
@@ -93,7 +106,9 @@ export default class Home extends Component {
 
         { this.state.result && (
           <Text background={this.state.success ? '#beffbf' : '#ffbfbe'} padding="0 100px" textAlign="center" size="16">
-            {this.state.result}
+            {
+              JSON.stringify(this.state.result)
+            }
           </Text>
         )}
       </div>

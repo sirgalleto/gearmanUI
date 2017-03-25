@@ -12,6 +12,7 @@ export default class Home extends Component {
   jobName = '';
   payload = null;
   servers = '';
+  response = '';
   subscribeWorkers() {
     const gearmanServers = [];
     this.servers.split(',').forEach(server => {
@@ -33,8 +34,10 @@ export default class Home extends Component {
       console.info(`${this.jobName} submited`);
 
       job.on('complete', () => {
+        this.response = job.response;
+        this.processResponse();
         this.setState({
-          result: job.response ? this.processResponse(job.response) : '',
+          result: this.response,
           success: true
         });
       });
@@ -47,18 +50,15 @@ export default class Home extends Component {
       });
     }
   }
-  processResponse(data) {
-    console.log(data);
-    data = data.toString();
-    console.log(data);
+  processResponse() {
+    this.response = this.response.toString();
 
-    alert(typeof data);
-
-    if (typeof data === 'object') {
-      return JSON.stringify(data, null, 2);
+    try {
+      this.response = JSON.parse(this.response);
+      this.response = JSON.stringify(this.response, null, 2);
+    } catch (e) {
+      console.info(e);
     }
-
-    return data;
   }
   render() {
     return (
